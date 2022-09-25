@@ -1,0 +1,7 @@
+/.idea/*
+/.idea/libraries/Maven__org_springframework_plugin_spring_plugin_metadata_1_2_0_RELEASE.xml
+/.data/*
+/data/test.mv.db
+/precatorio/data/test.mv.db
+/data/test.trace.db
+/precatorio/data/test.trace.db
