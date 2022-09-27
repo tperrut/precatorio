@@ -16,12 +16,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Contrato extends AbstractEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
-
     @Column
     private Double valorContrato;
     @Column
     private Double valorAcordado;
+
+
 }

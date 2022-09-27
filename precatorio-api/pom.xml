@@ -11,7 +11,7 @@
 	<groupId>br.com.precatorio</groupId>
 	<artifactId>precatorio</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>precatorio</name>
+	<name>precatorio-api</name>
 	<description>Projeto para compra de precatórios</description>
 	<properties>
 		<java.version>11</java.version>

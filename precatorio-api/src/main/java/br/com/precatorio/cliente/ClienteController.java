@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,45 +73,24 @@ public class ClienteController {
 
     // get Cliente by id rest api
     @GetMapping("/cliente/{id}")
-    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
-        Cliente Cliente = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
-        return ResponseEntity.ok(Cliente);
-    }
-
-    // update Cliente rest api
-
-    @PutMapping("/cliente/{id}")
-    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody ClienteDto dto){
+    public ResponseEntity<ClienteDto> getClienteById(@PathVariable Long id) {
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
 
-        Contato newCtt = Contato.builder()
-                .nome(dto.getNomeContato())
-                .email(dto.getEmail())
-                    .build();
-        cliente.setContato(newCtt);
-
-        Contrato contrato = Contrato.builder()
-                .valorContrato(dto.getValorContrato())
-                .valorContrato(dto.getValorContrato() * (dto.getPercentual()/100))
-                .build();
-        cliente.setContratos(List.of(contrato));
-
-        Endereco newContato = Endereco.builder()
-                .logradouro(dto.getLogradouro())
-                .cidade(dto.getCidade())
-                .cep(dto.getCep())
-                .complemento(dto.getComplemento())
-                .pais(dto.getPais())
-                .estado(dto.getEstado())
-                .build();
-        cliente.setEndereco(newContato);
+        return ResponseEntity.ok(ClienteDto.convertClienteToDto(cliente));
+    }
 
 
-        Cliente updatedCliente = repository.save(cliente);
+    @PutMapping("/cliente/{id}")
+    public ResponseEntity<ClienteDto> updateCliente(@PathVariable Long id, @RequestBody ClienteDto dto){
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
 
-        return ResponseEntity.ok(updatedCliente);
+        Cliente updated = ClienteDto.convertDtoToCliente(dto);
+        updated.setId(cliente.getId());
+        updated = repository.save(updated);
+
+        return ResponseEntity.ok(ClienteDto.convertClienteToDto(updated));
     }
 
     // delete Cliente rest api

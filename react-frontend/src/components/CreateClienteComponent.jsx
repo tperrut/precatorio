@@ -11,7 +11,7 @@ class CreateClienteComponent extends Component {
             nomeContato: '',
             rg: '',
             cpf: '',
-            estado_civil: '',
+            estadoCivil: '',
             telefone:'',
             nacionalidade:'',
             email: '',
@@ -22,8 +22,9 @@ class CreateClienteComponent extends Component {
             pais:'',
             numero:'',
             complemento:'',
-            valor_contrato:'',
-            percentual:''
+            valorContrato:'',
+            percentual:'',
+            cliente: {}
         
         }
         this.changeNomeHandler = this.changeNomeHandler.bind(this);
@@ -33,7 +34,8 @@ class CreateClienteComponent extends Component {
         this.changeTelefoneHandler = this.changeTelefoneHandler.bind(this);
 
         this.saveOrUpdateclientes = this.saveOrUpdateclientes.bind(this);
-
+        this.changeEmailHandler = this.changeEmailHandler.bind(this)
+        this.changeEstadoCivilHandler = this.changeEstadoCivilHandler.bind(this)
         this.getListEstados = this.getListEstados.bind(this);
     }
 
@@ -44,24 +46,47 @@ class CreateClienteComponent extends Component {
         if(this.state.id === '_add'){
             return
         }else{
+            
+
             ClienteService.getClienteById(this.state.id).then( (res) =>{
                 let cliente = res.data;
-                this.setState({nome: cliente.nome,
-                    rg: cliente.rg,
-                    cpf : cliente.cpf
-                });
+            
+                this.setState({
+                  //  id:              cliente.id,
+                    nomeContato:     cliente.nomeContato, 
+                    valorContrato:   cliente.valorContrato,
+                    telefone:        cliente.telefone, 
+                    email:           cliente.email,
+                    rg:              cliente.rg,
+                    cpf:             cliente.cpf,
+                    estadoCivil:     cliente.estadoCivil,
+                    telefone:        cliente.telefone,
+                    nacionalidade:   cliente.nacionalidade,
+                    logradouro:      cliente.logradouro,
+                    cidade:          cliente.cidade,
+                    estado:          cliente.estado,
+                    pais:            cliente.pais,
+                    numero:          cliente.numero,
+                    complemento:     cliente.complemento,
+                    cep:             cliente.cep,
+                    valorContrato:  cliente.valorContrato,
+                    percentual:      cliente.percentual,
+                    cliente:         cliente
+
+                })    
             });
         }        
     }
+
     saveOrUpdateclientes = (e) => {
         e.preventDefault();
         let cliente = {
-            nomeContato:   this.state.nome, 
+            nomeContato:   this.state.nomeContato, 
             telefone:      this.state.telefone, 
             email:         this.state.email,
             rg:            this.state.rg,
             cpf:           this.state.cpf,
-            estado_civil:  this.state.estado_civil,
+            estadoCivil:  this.state.estadoCivil,
             telefone:      this.state.telefone,
             nacionalidade: this.state.nacionalidade,
             logradouro:    this.state.logradouro,
@@ -71,7 +96,7 @@ class CreateClienteComponent extends Component {
             numero:        this.state.numero,
             complemento:   this.state.complemento,
             cep:           this.state.cep,
-            valor_contrato:this.state.valor_contrato,
+            valorContrato:this.state.valorContrato,
             percentual:    this.state.percentual
         };
 
@@ -81,23 +106,23 @@ class CreateClienteComponent extends Component {
         if(this.state.id === '_add'){
             ClienteService.createCliente(cliente).then(res =>{
                 this.props.history.push('/clientes');
+                alert("Cliente Criado com Sucesso!")
+
             });
         }else{
             ClienteService.updateCliente(cliente, this.state.id).then( res => {
                 this.props.history.push('/clientes');
+                alert("Cliente Editado com Sucesso!")
             });
         }
     }
     
     changeNomeHandler= (event) => {
-        this.setState({nome: event.target.value});
+        this.setState({nomeContato: event.target.value});
     }
 
     changeEstadoCivilHandler = (event) => {
-        alert(this.state.estado_civil)
-        this.setState({estado_civil: event.target.value});
-        alert(this.state.estado_civil)
-
+        this.setState({estadoCivil: event.target.value});
     }
 
     changeEmailHandler = (event) => {
@@ -149,7 +174,7 @@ class CreateClienteComponent extends Component {
     }
 
     changeValorContratoHandler = (event) => {
-        this.setState({valor_contrato: event.target.value});
+        this.setState({valorContrato: event.target.value});
     }
 
     changeCepHandler = (event) => {
@@ -216,7 +241,7 @@ class CreateClienteComponent extends Component {
                                             <div className = "col-12">
                                                 <label> Nome: </label>
                                                 <input placeholder="Nome Cliente" name="nome" className="form-control" 
-                                                    value={this.state.nome} onChange={this.changeNomeHandler}/>
+                                                    value={this.state.nomeContato} onChange={this.changeNomeHandler}/>
                                             </div>
                                             <div className = "col-md-8">
                                                  <label>Email: </label>
@@ -249,7 +274,7 @@ class CreateClienteComponent extends Component {
                                             </div>
                                             <div className = "col-md-6">
                                                 <label> Estado Cívil: </label>
-                                                <select name="estadoCivil" className="form-control"  class="form-select" value={this.state.estado_civil} onChange={this.changeEstadoCivilHandler} >
+                                                <select name="estadoCivil" className="form-control"  class="form-select" value={this.state.estadoCivil} onChange={this.changeEstadoCivilHandler} >
                                                     <option selected>Selecione ...</option>
                                                     <option value={"CASADO"} >Casado</option>
                                                     <option value={ "SOLTEIRO"} >Solteiro</option>
@@ -261,7 +286,7 @@ class CreateClienteComponent extends Component {
                                             <div className = "col-md-3">
                                                 <label> Valor do Contrato: </label>
                                                 <input placeholder="Valor" name="valor" className="form-control" 
-                                                    value={this.state.valor_contrato} onChange={this.changeValorContratoHandler}/>
+                                                    value={this.state.valorContrato} onChange={this.changeValorContratoHandler}/>
                                             </div>
 
                                             <div className = "col-md-7">

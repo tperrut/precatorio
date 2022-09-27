@@ -11,7 +11,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity @Table(name = "CLIENTE")
 @Getter @Setter
@@ -24,62 +26,75 @@ public class Cliente extends AbstractEntity {
 
 
     //    @NotEmpty(message = "Rg não pode ser vazio")
-        @Column(nullable = true)
-        private String rg;
+    @Column(nullable = true)
+    private String rg;
 
-        //    @NotEmpty(message = "CPF não pode ser vazio")
-        @Column(nullable = true)
-        private String cpf;
+    //    @NotEmpty(message = "CPF não pode ser vazio")
+    @Column(nullable = true)
+    private String cpf;
 
 
 
     //    @NotEmpty(message = "Estado Civil não pode ser vazio")
-            @Column(nullable = true)
-        private String estadoCivil;
+    @Column(nullable = true)
+    private String estadoCivil;
 
     //    @NotEmpty(message = "Nacionalidade não pode ser vazio")
-        @Column()
-        private String nacionalidade;
+    @Column()
+    private String nacionalidade;
 
-        @OneToOne(
-            mappedBy = "cliente",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-        )
-        private Endereco endereco;
+    @Column()
+    private Double percentual;
 
-        @OneToOne(
-            mappedBy = "cliente",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-        )
-        private Contato contato;
+    @OneToOne(
+        mappedBy = "cliente",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.EAGER
+    )
+    private Endereco endereco;
 
-        @OneToMany
-        private List<Contrato> contratos;
+    @OneToOne(
+        mappedBy = "cliente",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.EAGER
+    )
+    private Contato contato;
 
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="yyyy-MM-dd")
-    //    @Column(name= "updated_at", nullable = false, columnDefinition = "DATE")
-        private LocalDateTime updateAt;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="cliente_id")
+    private Set<Contrato> contratos;
 
-        public String getNomeContato(){
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="yyyy-MM-dd")
+//    @Column(name= "updated_at", nullable = false, columnDefinition = "DATE")
+    private LocalDateTime updateAt;
+
+    public String getNomeContato(){
         return contato.getNome();
     }
-    @Override
-    public String toString() {
-        return "Cliente{" +
-                "rg='" + this.getNomeContato() + '\'' +
+    public void addContrato(Contrato contrato){
+        if(this.contratos == null)
+            contratos = new HashSet<>();
 
-                "rg='" + rg + '\'' +
-                ", cpf='" + cpf + '\'' +
-                ", estadoCivil='" + estadoCivil + '\'' +
-                ", nacionalidade='" + nacionalidade + '\'' +
-                ", endereco=" + endereco +
-                ", contato=" + contato +
-                ", contratos=" + contratos +
-                ", updateAt=" + updateAt +
-                '}';
+        contratos.add(contrato);
     }
+
+
+
+//    @Override
+//    public String toString() {
+//        return "Cliente{" +
+//                "Nome='" + this.getNomeContato() + '\'' +
+//
+//                "rg='" + rg + '\'' +
+//                ", cpf='" + cpf + '\'' +
+//                ", estadoCivil='" + estadoCivil + '\'' +
+//                ", nacionalidade='" + nacionalidade + '\'' +
+//                ", endereco=" + endereco +
+//                ", contato=" + contato +
+//                ", contratos=" + contratos +
+//                ", updateAt=" + updateAt +
+//                '}';
+//    }
 }

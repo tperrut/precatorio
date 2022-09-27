@@ -22,6 +22,7 @@ class ListClienteComponent extends Component {
         ClienteService.deleteCliente(id).then( res => {
             this.setState({clientes: this.state.clientes.filter(Cliente => Cliente.id !== id)});
         });
+        alert("Cliente Deletado com sucesso!")
     }
 
     geraContrato(id){

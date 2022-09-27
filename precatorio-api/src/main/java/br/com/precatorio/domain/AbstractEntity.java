@@ -1,6 +1,7 @@
 package br.com.precatorio.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.GeneratedValue;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
-@Getter
+@Getter @Setter
 public class AbstractEntity implements Serializable {
 
 	@Id
