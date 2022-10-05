@@ -5,6 +5,9 @@ import br.com.precatorio.contrato.Contrato;
 import br.com.precatorio.endereco.Endereco;
 import lombok.*;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,31 +17,60 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-/*@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")*/
-public class    ClienteDto {
+public class ClienteDto {
 
     public static final double TAXA_PADRAO = 80.0;
     public static final double ZERO = 0.0;
+
     private Long id;
+
+    @NotNull(message = "Nome is required.")
+    @Size(min = 10, message = "Nome is required.")
     private String nomeContato;
+
+    @NotNull(message = "RG obrigatório.")
+    @Size(min = 10, message = "RG obrigatório.")
     private String rg;
+
+    @NotNull(message = "CPF obrigatório.")
+    @Size(min = 10, message = "CPF obrigatório.")
     private String cpf;
+
+    @NotNull(message = "Email obrigatório.")
+    @Size(min = 10, message = "Email obrigatório.")
+    @Email(message = "Formato de Email inválido .")
     private String email;
+
+    @NotNull(message = "CPF obrigatório.")
     private String estadoCivil;
+
+    @NotNull(message = "CPF obrigatório.")
     private String nacionalidade;
+
+    @NotNull(message = "Telefone obrigatório.")
     private String telefone;
+    @NotNull(message = "Logradouro obrigatório.")
     private String logradouro;
+    @NotNull(message = "Cidade obrigatório.")
     private String cidade;
+    @NotNull(message = "Estado obrigatório.")
+    @Size(min = 2, max = 2, message = "RG obrigatório.")
     private String estado;
+    @NotNull(message = "País obrigatório.")
     private String pais;
+    @NotNull(message = "Número obrigatório.")
     private Integer numero;
+
+    //@NotNull(message = "Complemento obrigatório.")
     private String complemento;
+    @NotNull(message = "Cep obrigatório.")
     private String cep;
-    private Cliente cliente;
+
+    @NotNull(message = "Valor obrigatório.")
     private Double valorContrato;
+    @NotNull(message = "Percentual obrigatório.")
     private Double percentual;
+
 
     public static ClienteDto convertClienteToDto(Cliente cliente) {
         //TODO rever a lógica do valor

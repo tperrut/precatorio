@@ -1,8 +1,5 @@
 package br.com.precatorio.cliente;
 
-import br.com.precatorio.contato.Contato;
-import br.com.precatorio.contrato.Contrato;
-import br.com.precatorio.endereco.Endereco;
 import br.com.precatorio.system.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -10,10 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +25,6 @@ public class ClienteController {
     ClienteRepository repository;
 
     @GetMapping(path = "cliente/download/{id}")
-
     public HttpEntity<byte[]> gerarContratoWord(@PathVariable Long id) {
         var cliente =  repository.findById(id);
 
@@ -68,7 +64,7 @@ public class ClienteController {
     // create Cliente rest api
     @PostMapping("/cliente")
     public Cliente createCliente(@RequestBody ClienteDto dto) {
-        return repository.save(dto.convertDtoToCliente(dto));
+        return repository.save(ClienteDto.convertDtoToCliente(dto));
     }
 
     // get Cliente by id rest api
@@ -82,7 +78,7 @@ public class ClienteController {
 
 
     @PutMapping("/cliente/{id}")
-    public ResponseEntity<ClienteDto> updateCliente(@PathVariable Long id, @RequestBody ClienteDto dto){
+    public ResponseEntity<ClienteDto> updateCliente(@PathVariable Long id,@Valid @RequestBody ClienteDto dto){
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
 
