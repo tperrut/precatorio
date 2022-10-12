@@ -4,12 +4,13 @@ import br.com.precatorio.cliente.Cliente;
 import br.com.precatorio.contato.Contato;
 import br.com.precatorio.endereco.Endereco;
 import br.com.precatorio.cliente.ClienteRepository;
+import br.com.precatorio.cliente.conjugue.Conjugue;
+import br.com.precatorio.cliente.conjugue.ConjugueRepository;
 import br.com.precatorio.endereco.EnderecoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,8 @@ public class PrecatorioApplication {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
+    @Autowired
+    private ConjugueRepository conjugueRepository;
     public static void main(String[] args) {
           SpringApplication.run(PrecatorioApplication.class, args);
     }
@@ -50,8 +53,27 @@ public class PrecatorioApplication {
             Endereco endereco3 = Endereco.builder().logradouro("Rua D").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 222").build();
             Endereco endereco4 = Endereco.builder().logradouro("Rua B").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 111").build();
 
+           
+
+            Stream.of(
+                    //Endereco.builder().logradouro("Rua V").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 444").build()
+                    endereco,endereco1,endereco2,endereco3,endereco4
+            ).forEach(
+                    adress -> enderecoRepository.saveAndFlush(adress)
+            );
+
+            Conjugue cjg = Conjugue.builder().
+                endereco(endereco4).
+                nomeConjugue("Pequena Raimunda").
+                rg("020.133.110-5").
+                cpf("105.932.327-39").
+                estadoCivil("Casado")
+                .build();
+            conjugueRepository.saveAndFlush(cjg);
+
             Cliente cliente1 = Cliente.builder().rg("020.133.110-5").cpf("105.932.327-39").estadoCivil("Casado")
                     .endereco(endereco)
+                    .conjugue(cjg)
                     .contato(jack_tequila).build();
             Cliente cliente2 = Cliente.builder().rg("042.141.155-2").cpf("102.932.876-32").estadoCivil("Solteiro")
                     .endereco(endereco1)
@@ -67,12 +89,12 @@ public class PrecatorioApplication {
                     .endereco(endereco4)
                     .contato(rock_bauer).build();
 
-            endereco.setCliente(cliente1);
+         /*    endereco.setCliente(cliente1);
             endereco1.setCliente(cliente2);
             endereco2.setCliente(cliente3);
             endereco3.setCliente(cliente4);
             endereco4.setCliente(cliente5);
-
+ */
             jack_estripador.setCliente(cliente1);
             jack_tequila.setCliente(cliente2);
             jack_jhonson.setCliente(cliente3);
@@ -81,14 +103,9 @@ public class PrecatorioApplication {
 
             List list = Stream.of(cliente1,cliente2,cliente4,cliente3,cliente4,cliente5).collect(Collectors.toList());
             clienteRepository.saveAllAndFlush(list);
+        
 
-
-           /* Stream.of(
-                    Endereco.builder().logradouro("Rua V").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 444").build()
-            ).forEach(
-                    adress -> enderecoRepository.save(adress)
-            );
-*/
+            
             //retrieve them all, and print so that we see everything is wired up correctly
 //            clienteRepository.findAll().forEach(System.out::println);
         };

@@ -17,10 +17,6 @@ import javax.persistence.*;
         property = "id")
 public class Endereco extends AbstractEntity {
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
-
     private String logradouro;
     private String cidade;
     private String estado;
@@ -33,7 +29,6 @@ public class Endereco extends AbstractEntity {
     @Override
     public String toString() {
         return "Endereco{" +
-                "cliente=" + cliente +
                 ", logradouro='" + logradouro + '\'' +
                 ", cidade='" + cidade + '\'' +
                 ", estado='" + estado + '\'' +

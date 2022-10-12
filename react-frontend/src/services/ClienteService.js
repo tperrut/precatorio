@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const CLIENTE_API_BASE_URL = "http://localhost:8080/api/v1/cliente";
-const CLIENTE_API_DOWNLOAD_URL = "http://localhost:8080/api/v1/cliente/download/";
+const CLIENTE_API_BASE_URL = "http://localhost:8081/api/v1/cliente";
+const CLIENTE_API_DOWNLOAD_URL = "http://localhost:8081/api/v1/cliente/download/";
 
 class ClienteService {
 

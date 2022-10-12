@@ -1,5 +1,6 @@
 package br.com.precatorio.cliente;
 
+import br.com.precatorio.endereco.EnderecoRepository;
 import br.com.precatorio.system.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -23,6 +24,9 @@ public class ClienteController {
     ClienteService service;
     @Autowired
     ClienteRepository repository;
+
+    @Autowired
+    EnderecoRepository enderecoRepository;
 
     @GetMapping(path = "cliente/download/{id}")
     public HttpEntity<byte[]> gerarContratoWord(@PathVariable Long id) {
@@ -64,7 +68,9 @@ public class ClienteController {
     // create Cliente rest api
     @PostMapping("/cliente")
     public Cliente createCliente(@RequestBody ClienteDto dto) {
-        return repository.save(ClienteDto.convertDtoToCliente(dto));
+        Cliente entity = ClienteDto.convertDtoToCliente(dto);
+        entity.setEndereco(enderecoRepository.save(entity.getEndereco()));
+        return repository.save(entity);
     }
 
     // get Cliente by id rest api

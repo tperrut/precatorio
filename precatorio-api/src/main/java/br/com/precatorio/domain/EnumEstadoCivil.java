@@ -2,7 +2,7 @@ package br.com.precatorio.domain;
 
 public enum EnumEstadoCivil {
 	
-	SOLTEIRO("Casado"), CASADO("Solteiro");
+	SOLTEIRO("SOLTEIRO"), CASADO("CASADO");
 	
 	private String valor;
 
