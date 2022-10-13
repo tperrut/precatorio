@@ -1,4 +1,4 @@
-package br.com.precatorio.system;
+package br.com.precatorio.system.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import java.net.http.HttpClient;
 
 @Configuration
-public class ClienteConfiguration {
+public class ClientConfiguration {
 
     @Bean
-    public HttpClient cliente(){
+    public HttpClient httpClient(){
         return HttpClient.newHttpClient();
     }
 }
