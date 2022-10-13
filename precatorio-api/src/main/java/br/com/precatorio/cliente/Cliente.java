@@ -11,6 +11,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +46,11 @@ public class Cliente extends AbstractEntity {
     @OneToOne
     private Endereco endereco;
 
-    @OneToOne
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="dd-MM-yyyy")
+//    @Column(name= "data_nascimento", nullable = false, columnDefinition = "DATE")
+    private LocalDate dataNascimento;
+
+    @Transient
     private Conjugue conjugue;
 
     //    @NotEmpty(message = "Profissao não pode ser vazio")
@@ -59,8 +64,6 @@ public class Cliente extends AbstractEntity {
         fetch = FetchType.EAGER
     )
     private Contato contato;
-
-
 
     @Transient
     private Set<Contrato> contratos;

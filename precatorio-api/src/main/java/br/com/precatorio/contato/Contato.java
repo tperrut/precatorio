@@ -47,9 +47,7 @@ public class Contato extends AbstractEntity {
     @Column()
     private String email;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="yyyy-MM-dd")
-//    @Column(name= "data_nascimento", nullable = false, columnDefinition = "DATE")
-    private LocalDate dataNascimento;
+
 
     @Override
     public String toString() {
@@ -60,7 +58,6 @@ public class Contato extends AbstractEntity {
                 ", tipoProcesso='" + tipoProcesso + '\'' +
                 ", tipoPrecatorio='" + tipoPrecatorio + '\'' +
                 ", email='" + email + '\'' +
-                ", dataNascimento=" + dataNascimento +
                 '}';
     }
 }
