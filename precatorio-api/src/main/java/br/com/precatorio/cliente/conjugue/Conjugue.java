@@ -1,8 +1,6 @@
 package br.com.precatorio.cliente.conjugue;
 
 import br.com.precatorio.cliente.Cliente;
-import br.com.precatorio.contato.Contato;
-import br.com.precatorio.contrato.Contrato;
 import br.com.precatorio.domain.AbstractEntity;
 import br.com.precatorio.endereco.Endereco;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -12,9 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity @Table(name = "CONJUGUE")
 @Getter @Setter
@@ -35,16 +30,15 @@ public class Conjugue extends AbstractEntity {
     private String cpf;
 
 
-
     //    @NotEmpty(message = "Estado Civil não pode ser vazio")
-    @Column(nullable = true)
-    private String estadoCivil;
+//    @Column(nullable = true)
+//    private String estadoCivil;
 
     //    @NotEmpty(message = "Nacionalidade não pode ser vazio")
     @Column()
     private String nacionalidade;
 
-    
+
     //    @NotEmpty(message = "Nome não pode ser vazio")
     @Column(nullable = true)
     private String nomeConjugue;
@@ -61,7 +55,7 @@ public class Conjugue extends AbstractEntity {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "dd-MM-yyyy")
 //    @Column(name= "updated_at", nullable = false, columnDefinition = "DATE")
     private LocalDateTime updateAt;
 

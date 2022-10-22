@@ -11,7 +11,6 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,14 +42,24 @@ public class Cliente extends AbstractEntity {
     @Column()
     private Double percentual;
 
+    @Column()
+    private String codBanco;
+    @Column()
+    private String nomeBanco;
+
     @OneToOne
     private Endereco endereco;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="dd-MM-yyyy")
-//    @Column(name= "data_nascimento", nullable = false, columnDefinition = "DATE")
-    private LocalDate dataNascimento;
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="dd-MM-yyyy")
+////    @Column(name= "data_nascimento", nullable = false, columnDefinition = "DATE")
+//    private LocalDate dataNascimento;
 
-    @Transient
+    @OneToOne(
+            mappedBy = "cliente",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
     private Conjugue conjugue;
 
     //    @NotEmpty(message = "Profissao não pode ser vazio")
@@ -58,30 +67,35 @@ public class Cliente extends AbstractEntity {
     private String profissao;
 
     @OneToOne(
-        mappedBy = "cliente",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.EAGER
+            mappedBy = "cliente",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
     private Contato contato;
 
-    @Transient
+    @OneToMany(
+            mappedBy = "cliente",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
     private Set<Contrato> contratos;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern="yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
 //    @Column(name= "updated_at", nullable = false, columnDefinition = "DATE")
     private LocalDateTime updateAt;
 
-    public String getNomeContato(){
-        return contato.getNome();   
+    public String getNomeContato() {
+        return contato.getNome();
     }
-    public void addContrato(Contrato contrato){
-        if(this.contratos == null)
+
+    public void addContrato(Contrato contrato) {
+        if (this.contratos == null)
             contratos = new HashSet<>();
 
         contratos.add(contrato);
     }
-
 
 
 //    @Override

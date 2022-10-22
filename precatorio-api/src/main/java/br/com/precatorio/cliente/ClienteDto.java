@@ -5,6 +5,7 @@ import br.com.precatorio.contato.Contato;
 import br.com.precatorio.contrato.Contrato;
 import br.com.precatorio.domain.EnumEstadoCivil;
 import br.com.precatorio.endereco.Endereco;
+import br.com.precatorio.system.exception.ConverterException;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -42,11 +43,22 @@ public class ClienteDto {
     @Email(message = "Formato de Email inválido .")
     private String email;
 
-    @NotNull(message = "CPF obrigatório.")
+    @NotNull(message = "Estado Cívil obrigatório.")
     private String estadoCivil;
 
-    @NotNull(message = "CPF obrigatório.")
-    private String nacionalidade;
+    @NotNull(message = "Ente Devedor obrigatório.")
+    private String enteDevedor;
+
+    @NotNull(message = "Nome do Banco obrigatório.")
+    private String NomeBanco;
+
+    @NotNull(message = "Código obrigatório.")
+    private String CodBanco;
+
+    //TODO mapear ENTE_DEVEDOR
+    //COD_BANCO
+    //NOME_BANCO
+    //DATA_ATUAL
 
     @NotNull(message = "Telefone obrigatório.")
     private String telefone;
@@ -55,7 +67,7 @@ public class ClienteDto {
     @NotNull(message = "Cidade obrigatório.")
     private String cidade;
     @NotNull(message = "Estado obrigatório.")
-    @Size(min = 2, max = 2, message = "RG obrigatório.")
+//    @Size(min = 2, max = 2, message = "RG obrigatório.")
     private String estado;
     @NotNull(message = "País obrigatório.")
     private String pais;
@@ -75,8 +87,8 @@ public class ClienteDto {
     @NotNull(message = "Profissão obrigatório.")
     private String profissao;
 
-
-
+    @NotNull(message = "Nacionalidade obrigatório.")
+    private String nacionalidade;
 
 
     @NotNull(message = "Número do Processo obrigatório.")
@@ -90,80 +102,135 @@ public class ClienteDto {
 
     // data conjgue
 
-
-    @NotNull(message = "Nome obrigatório.")
     private String nomeConjugue;
-    @NotNull(message = "Profissão obrigatório.")
     private String profissaoConjugue;
+    private String nacionalidadeConjugue;
+    private String rgConjugue;
+    private String cpfConjugue;
 
     // adress conjugue
-    @NotNull(message = "Logradouro obrigatório.")
+
     private String logradouroConjugue;
-    @NotNull(message = "Cidade obrigatório.")
     private String cidadeConjugue;
-    @NotNull(message = "Estado obrigatório.")
-    @Size(min = 2, max = 2, message = "RG obrigatório.")
     private String estadoConjugue;
-    @NotNull(message = "País obrigatório.")
     private String paisConjugue;
-    @NotNull(message = "Número obrigatório.")
-    private Integer numeroEnderecoConjugue;
-
-    //@NotNull(message = "Complemento obrigatório.")
+    private Integer numeroConjugue;
     private String complementoConjugue;
-    @NotNull(message = "Cep obrigatório.")
     private String cepConjugue;
+    private Double valorAcordado;
 
-    public static ClienteDto convertClienteToDto(Cliente cliente) {
-        //TODO rever a lógica do valor "findAny"
-        Double valorContrato1 = cliente.getContratos().isEmpty() ? ZERO : cliente.getContratos().stream().findAny().get().getValorContrato();
-        return ClienteDto.builder()
-                .cpf(cliente.getCpf())
-                .rg(cliente.getRg())
-                .estadoCivil(cliente.getEstadoCivil())
-                .nacionalidade(cliente.getNacionalidade())
-                .estadoCivil(cliente.getEstadoCivil())
+
+    public static ClienteDto convertClienteToDto(Cliente cliente) throws ConverterException {
+        Double valorContrato;
+        Contrato contrato = null;
+        if (cliente.getContratos().size() == 0) {
+            valorContrato = ZERO;
+        } else {
+            //TODO rever a lógica do valor "findAny"
+            contrato = cliente.getContratos().stream().findAny().get();
+            valorContrato = contrato.getValorContrato();
+        }
+
+        ClienteDto dto = ClienteDto.builder()
                 .cep(cliente.getEndereco().getCep())
+
                 .cidade(cliente.getEndereco().getCidade())
+
                 .complemento(cliente.getEndereco().getComplemento())
-                .pais(cliente.getEndereco().getPais())
-                .estado(cliente.getEndereco().getEstado())
-                .logradouro(cliente.getEndereco().getLogradouro())
-                .numero(cliente.getEndereco().getNumero())
-                .nomeContato(cliente.getContato().getNome())
+
+                .cpf(cliente.getCpf())
+
                 .email(cliente.getContato().getEmail())
-                .telefone(cliente.getContato().getTelefone())
+                .estadoCivil(cliente.getEstadoCivil())
+
+                .estado(cliente.getEndereco().getEstado())
+
+                .logradouro(cliente.getEndereco().getLogradouro())
+
+                .nacionalidade(cliente.getNacionalidade())
+
+                .nomeContato(cliente.getContato().getNome())
+
+                .numero(cliente.getEndereco().getNumero())
+
+                .pais(cliente.getEndereco().getPais())
+
                 .percentual(cliente.getPercentual())
-                .valorContrato(valorContrato1)
+
+                .profissao(cliente.getProfissao())
+
+                .rg(cliente.getRg())
+
+                .telefone(cliente.getContato().getTelefone())
                 .build();
+
+        boolean isMarried = cliente.getEstadoCivil().equals(EnumEstadoCivil.CASADO.getValor());
+        boolean hasContrato = cliente.getContratos().size() > 0;
+
+        if (isMarried) popularConjugue(dto, cliente);
+        if (hasContrato) populateContrato(dto, cliente);
+
+        return dto;
     }
-    public static Cliente convertDtoToCliente(ClienteDto dto){
+
+    private static void populateContrato(ClienteDto dto, Cliente cliente) {
+        Contrato contrato = cliente.getContratos().stream().findFirst().get();
+        dto.setValorContrato(contrato.getValorContrato());
+        dto.setNumPrecatorio(contrato.getNumPrecatorio());
+        dto.setNumProcesso(contrato.getNumProcesso());
+        dto.setOrigemTramitacao(contrato.getOrigemTramitacao());
+        dto.setValorAcordado(contrato.getValorAcordado());
+
+    }
+
+    private static void popularConjugue(ClienteDto dto, Cliente cliente) {
+        dto.setCepConjugue(cliente.getConjugue().getEndereco().getCep());
+        dto.setCidadeConjugue(cliente.getConjugue().getEndereco().getCidade());
+        dto.setComplementoConjugue(cliente.getConjugue().getEndereco().getComplemento());
+        dto.setCpfConjugue(cliente.getConjugue().getCpf());
+        dto.setEstadoConjugue(cliente.getConjugue().getEndereco().getEstado());
+        dto.setLogradouroConjugue(cliente.getConjugue().getEndereco().getLogradouro());
+        dto.setNacionalidadeConjugue(cliente.getConjugue().getNacionalidade());
+        dto.setNumeroConjugue(cliente.getConjugue().getEndereco().getNumero());
+        dto.setNomeConjugue(cliente.getConjugue().getNomeConjugue());
+        dto.setRgConjugue(cliente.getConjugue().getRg());
+        dto.setProfissaoConjugue(cliente.getConjugue().getProfissao());
+        dto.setPaisConjugue(cliente.getEndereco().getPais());
+
+
+    }
+
+    public static Cliente convertDtoToCliente(ClienteDto dto) throws ConverterException {
 
         Contrato contrato = getContrato(dto);
 
         Contato contato = getContato(dto);
 
         Endereco endereco = getEnderecoByDto(dto);
-
-        if(dto.getEstadoCivil().equals(EnumEstadoCivil.CASADO.valor())) {
-            Conjugue conjugue = getConjugue(dto);
-            Endereco enderecoConjugue = getEnderecoConjugueByDto(dto);
+        Conjugue conjugue = null;
+        Endereco enderecoConjugue = null;
+        if (dto.getEstadoCivil().equals(EnumEstadoCivil.CASADO.getValor())) {
+            conjugue = getConjugue(dto);
+            enderecoConjugue = getEnderecoConjugueByDto(dto);
+            conjugue.setEndereco(enderecoConjugue);
         }
 
         Cliente cliente = Cliente.builder()
-            .rg(dto.getRg())
-            .cpf(dto.getCpf())
-            .estadoCivil(dto.getEstadoCivil())
-            .nacionalidade(dto.getNacionalidade())
-            .contato(contato)
-            .endereco(endereco)
-            .updateAt(LocalDateTime.now())
-            .percentual(dto.getPercentual())
-            .build();
+                .rg(dto.getRg())
+                .cpf(dto.getCpf())
+                .estadoCivil(dto.getEstadoCivil())
+                .nacionalidade(dto.getNacionalidade())
+                .contato(contato)
+                .profissao(dto.getProfissao())
+                .endereco(endereco)
+                .updateAt(LocalDateTime.now())
+                .percentual(dto.getPercentual())
+                .build();
 
         cliente.addContrato(contrato);
         contato.setCliente(cliente);
-
+        cliente.setConjugue(conjugue);
+        conjugue.setCliente(cliente);
         return cliente;
 
     }
@@ -174,7 +241,7 @@ public class ClienteDto {
                 .cidade(dto.getCidadeConjugue())
                 .logradouro(dto.getLogradouroConjugue())
                 .cep(dto.getCepConjugue())
-                .numero(dto.getNumeroEnderecoConjugue())
+                .numero(dto.getNumeroConjugue())
                 .estado(dto.getEstadoConjugue())
                 .pais(dto.getPaisConjugue())
                 .build();
@@ -183,11 +250,12 @@ public class ClienteDto {
 
     private static Conjugue getConjugue(ClienteDto dto) {
         Conjugue conjugue = Conjugue.builder()
-                .rg(dto.getRg())
+                .rg(dto.getRgConjugue())
                 .nomeConjugue(dto.getNomeConjugue())
-                .cpf(dto.getCep())
-                .profissao(dto.getProfissao())
-                .nacionalidade(dto.getNacionalidade())
+                .cpf(dto.getCepConjugue())
+                .profissao(dto.getProfissaoConjugue())
+                .nacionalidade(dto.getNacionalidadeConjugue())
+                .updateAt(LocalDateTime.now())
                 .build();
         return conjugue;
 

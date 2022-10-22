@@ -50,27 +50,43 @@ class CreateClienteComponent extends Component {
             complementoConjugue:   '',
             cepConjugue:           '',
             logradouroConjugue:    '',
+            codBanco:              '',
+            NomeBanco:             '',
+            enteDevedor:           '',
+
             cliente: {}
 
         }
 
         this.changeNomeHandler = this.changeNomeHandler.bind(this);
-        this.changeRgHandler = this.changeRgHandler.bind(this);
-        this.changeCpfHandler = this.changeCpfHandler.bind(this);
-        this.changeNacionalidadeHandler = this.changeNacionalidadeHandler.bind(this);
-
         this.changeNomeConjugueHandler = this.changeNomeConjugueHandler.bind(this);
+
+        this.changeRgHandler = this.changeRgHandler.bind(this);
         this.changeRgConjugueHandler = this.changeRgConjugueHandler.bind(this);
+
+        this.changeCpfHandler = this.changeCpfHandler.bind(this);
         this.changeCpfConjugueHandler = this.changeCpfConjugueHandler.bind(this);
+
+        this.changeNacionalidadeHandler = this.changeNacionalidadeHandler.bind(this);
         this.changeNacionalidadeConjugueHandler = this.changeNacionalidadeConjugueHandler.bind(this);
 
 
         this.changeTelefoneHandler = this.changeTelefoneHandler.bind(this);
 
         this.saveOrUpdateclientes = this.saveOrUpdateclientes.bind(this);
+
         this.changeEmailHandler = this.changeEmailHandler.bind(this)
         this.changeEstadoCivilHandler = this.changeEstadoCivilHandler.bind(this)
+
         this.getListEstados = this.getListEstados.bind(this);
+
+        this.changeProfissaoConjugueHandler = this.changeProfissaoConjugueHandler.bind(this)
+        this.changeProfissaoHandler = this.changeProfissaoHandler.bind(this)
+
+        this.changeCepHandler = this.changeCepHandler.bind(this)
+        this.changeCepConjugueHandler = this.changeCepConjugueHandler.bind(this)
+
+
     }
 
 
@@ -78,7 +94,8 @@ class CreateClienteComponent extends Component {
     componentDidMount(){
         //const [emailError, setEmailError] = useState('');
         //const [nomeError, setNomeError] = useState('');  
-             
+
+
         // step 4
         if(this.state.id === '_add'){
             return
@@ -87,10 +104,18 @@ class CreateClienteComponent extends Component {
 
             ClienteService.getClienteById(this.state.id).then( (res) =>{
                 let cliente = res.data;
-            
+
+
+                var s = cliente.estadoCivil ;
+                var isMarried = false;
+                if (s.match(/CASADO.*/)) {
+                  isMarried = true;
+                }
+
                 this.setState({
                   //  id:              cliente.id,
-                    showConjugue: false,
+
+                    showConjugue: isMarried,
 
                     nomeConjugue:          cliente.nomeConjugue,
                     rgConjugue:            cliente.rgConjugue,
@@ -129,7 +154,10 @@ class CreateClienteComponent extends Component {
                     profissao:       cliente.profissao,
                     numProcesso:     cliente.numProcesso,
                     origemTramitacao:cliente.origemTramitacao,
-                    numPrecatorio:   cliente.numPrecatorio
+                    numPrecatorio:   cliente.numPrecatorio,
+                    codBanco:        cliente.codBanco,
+                    nomeBanco:       cliente.nomeBanco,
+                    enteDevedor:     cliente.enteDevedor
 
                 })    
             });
@@ -168,16 +196,18 @@ class CreateClienteComponent extends Component {
             complemento:   this.state.complemento,
             cep:           this.state.cep,
 
-            valorContrato: this.state.valorContrato,
-            percentual:    this.state.percentual,
+            valorContrato:   this.state.valorContrato,
+            percentual:      this.state.percentual,
             numProcesso:     this.state.numProcesso,
             origemTramitacao:this.state.origemTramitacao,
 
             numPrecatorio:   this.state.numPrecatorio,
-            telefone:      this.state.telefone,
-            email:         this.state.email,
-            estadoCivil:   this.state.estadoCivil,
-
+            telefone:        this.state.telefone,
+            email:           this.state.email,
+            estadoCivil:     this.state.estadoCivil,
+            codBanco:        this.state.codBanco,
+            nomeBanco:       this.state.nomeBanco,
+            enteDevedor:     this.state.enteDevedor
 
         };
 
@@ -186,8 +216,11 @@ class CreateClienteComponent extends Component {
         // step 5
         if(this.state.id === '_add'){
             ClienteService.createCliente(cliente).then(res =>{
+                alert("res.data.fieldErrors " + res.data.fieldErrors)
 
                 if(res.data.fieldErrors) {
+                    alert("Erro ao salvar o Cliente, contate o Thiagão do Gongolo!!!")
+
                     res.data.fieldErrors.forEach(fieldError => {
                       if(fieldError.field === 'email'){
                         //setEmailError(fieldError.message);
@@ -204,8 +237,14 @@ class CreateClienteComponent extends Component {
                 }).catch((err) => err);
 
         }else{
+
             ClienteService.updateCliente(cliente, this.state.id).then( res => {
+                alert("res.data.fieldErrors " + res.data.fieldErrors)
+
                 if(res.data.fieldErrors) {
+
+                    alert("Erro ao salvar o Cliente, contate o Thiagão do Gongolo!!!")
+
                     res.data.fieldErrors.forEach(fieldError => {
                       if(fieldError.field === 'email'){
                         //setEmailError(fieldError.message);
@@ -358,6 +397,20 @@ class CreateClienteComponent extends Component {
         this.setState({numPrecatorio: event.target.value});
     }
 
+    changeProfissaoConjugueHandler = (event) => {
+        this.setState({profissaoConjugue: event.target.value});
+    }
+
+    changeCodBancolHandler = (event) => {
+            this.setState({codBanco: event.target.value});
+    }
+
+    changeNomeBancolHandler = (event) => {
+            this.setState({nomeBanco: event.target.value});
+    }
+
+
+
     cancel(){
         this.props.history.push('/clientes');
     }
@@ -405,9 +458,9 @@ class CreateClienteComponent extends Component {
 
     render() {
         return (
-            <div className = "firulinha">
+            <div >
                 <br></br>
-                   <div className = "container">
+                   <div className = "container" style={{background: "floralwhite",  borderRadius: "50px"}}>
                       
                                 {
                                     this.getTitle()
@@ -416,21 +469,34 @@ class CreateClienteComponent extends Component {
 
                                 <div >
                                     <form className = "row g-3 ">
-                                        <span className = "row g-3 " style={{  borderRadius: "50px", paddingBottom: "20px", background: "khaki"}}>
+                                        <span className = "row g-3 " style={{  borderRadius: "50px",   padding: "20px", margin: "auto", background: "gray"}}>
 
                                             <h4>Dados do Cliente</h4>
                                             <hr/>
-                                            <div className = "col-12">
+                                            <div className = "col-4">
                                                 <label> Nome: </label>
                                                 <input placeholder="Nome Cliente" name="nome" className="form-control" 
                                                     value={this.state.nomeContato} onChange={this.changeNomeHandler}/>
                                                      {/*nomeError ? <span style={{ color: 'red', fontSize: '12px'}}>{nomeError}</span> : ''*/}
                                             </div>
-                                            <div className = "col-md-8">
+                                            <div className = "col-md-4">
                                                  <label>Email: </label>
 
                                                     <input placeholder="Email " name="nome" className="form-control" 
                                                         value={this.state.email} onChange={this.changeEmailHandler}/>
+                                                        {/*emailError ? <span style={{ color: 'red', fontSize: '12px'}}>{emailError}</span> : ''*/}
+                                            </div>
+                                            <div className = "col-2">
+                                                <label> Nome Banco: </label>
+                                                <input placeholder="Nome Banco" name="nomeBanco" className="form-control"
+                                                    value={this.state.nomeBanco} onChange={this.changeNomeBancoHandler}/>
+                                                     {/*nomeError ? <span style={{ color: 'red', fontSize: '12px'}}>{nomeError}</span> : ''*/}
+                                            </div>
+                                            <div className = "col-md-2">
+                                                 <label>Cod. Banco: </label>
+
+                                                    <input placeholder="Código do Banco" name="codBanco" className="form-control"
+                                                        value={this.state.codBanco} onChange={this.changeCodBancolHandler}/>
                                                         {/*emailError ? <span style={{ color: 'red', fontSize: '12px'}}>{emailError}</span> : ''*/}
                                             </div>
                                             <div className = "col-md-4">
@@ -440,23 +506,30 @@ class CreateClienteComponent extends Component {
                                                         value={this.state.telefone} onChange={this.changeTelefoneHandler}/>
                                             </div>
 
-                                            <div className = "col-md-6">
+                                            <div className = "col-md-4">
                                                 <label> RG: </label>
                                                 <input placeholder="RG" name="rg" className="form-control" 
                                                     value={this.state.rg} onChange={this.changeRgHandler}/>
                                             </div>
-                                            <div className = "col-md-6">
+                                            <div className = "col-md-4">
                                                 <label> CPF : </label>
                                                 <input placeholder="CPF" name="cpf" className="form-control" 
                                                     value={this.state.cpf} onChange={this.changeCpfHandler}/>
                                             </div>
 
-                                            <div className = "col-md-6">
+                                             <div className = "col-md-4">
+                                                 <label>Profissão: </label>
+
+                                                    <input placeholder="Torneiro mecânico" name="profissao" className="form-control"
+                                                        value={this.state.profissao} onChange={this.changeProfissaoHandler}/>
+                                            </div>
+
+                                            <div className = "col-md-4">
                                                 <label> Nacionalidade: </label>
                                                 <input placeholder="Brasileiro..." name="nacionalidade" className="form-control" 
                                                     value={this.state.nacionalidade} onChange={this.changeNacionalidadeHandler}/>
                                             </div>
-                                            <div className = "col-md-6">
+                                            <div className = "col-md-4">
                                                 <label> Estado Cívil: </label>
                                                 <select name="estadoCivil" className="form-control"  class="form-select" value={this.state.estadoCivil} onChange={this.changeEstadoCivilHandler} >
                                                     <option selected>Selecione ...</option>
@@ -520,35 +593,43 @@ class CreateClienteComponent extends Component {
                                                         value={this.state.cidade} onChange={this.changeCidadeHandler}/>
                                                 </div>
                                         </span>
-                                         {this.state.showConjugue && <span style={{  borderRadius: "50px", paddingBottom: "20px", background: "cadetblue"}} className = "row g-3 ">
+                                         {this.state.showConjugue && <span style={{  borderRadius: "50px", margin: "auto", paddingBottom: "20px", marginTop: "14px", background: "darkgrey"}} className = "row g-3 ">
 
                                               {this.state.showConjugue && <h4 style={{marginTop: "20px"}}>Dados do Conjugue</h4> }
                                               {this.state.showConjugue && <hr/> }
 
-                                              {this.state.showConjugue &&   <div className = "col-12">
-                                                    <label> Nome Conjugue: </label>
+                                              {this.state.showConjugue &&   <div className = "col-8">
+                                                    <label> Nome: </label>
                                                     <input placeholder="Nome Conjugue" name="nomeConjugue" className="form-control"
                                                         value={this.state.nomeConjugue} onChange={this.changeNomeConjugueHandler}/>
                                                          {/*nomeError ? <span style={{ color: 'red', fontSize: '12px'}}>{nomeError}</span> : ''*/}
                                                  </div>
                                               }
 
+                                               {this.state.showConjugue &&  <div className = "col-md-4">
+                                                   <label>Profissão: </label>
+
+                                                      <input placeholder="Piloto" name="profissaoConjugue" className="form-control"
+                                                          value={this.state.profissaoConjugue} onChange={this.changeProfissaoConjugueHandler}/>
+                                              </div>
+                                               }
+
                                               {this.state.showConjugue &&    <div className = "col-md-4">
-                                                    <label> RG Conjugue: </label>
+                                                    <label> RG: </label>
                                                     <input placeholder="RG" name="rgConjugue" className="form-control"
                                                         value={this.state.rgConjugue} onChange={this.changeRgConjugueHandler}/>
                                                  </div>
                                               }
 
                                               {this.state.showConjugue &&    <div className = "col-md-4">
-                                                    <label> CPF Conjugue : </label>
+                                                    <label> CPF: </label>
                                                     <input placeholder="CPF" name="cpfConjugue" className="form-control"
                                                         value={this.state.cpfConjugue} onChange={this.changeCpfConjugueHandler}/>
                                                  </div>
                                              }
 
                                              {this.state.showConjugue &&    <div className = "col-md-4">
-                                                    <label> Nacionalidade Conjugue: </label>
+                                                    <label> Nacionalidade: </label>
                                                     <input placeholder="Brasileiro(a)..." name="nacionalidadeConjugue" className="form-control"
                                                         value={this.state.nacionalidadeConjugue} onChange={this.changeNacionalidadeConjugueHandler}/>
                                                  </div>
@@ -613,9 +694,9 @@ class CreateClienteComponent extends Component {
                                              </span>
                                              }
 
-                                          <span style={{marginLeft: "initial", borderRadius: "50px", paddingBottom: "20px", background: "peru"}} className = "row g-3 ">
+                                          <span style={{marginLeft: "initial", borderRadius: "50px", paddingBottom: "20px", marginTop: "14px", background: "darkgrey"}} className = "row g-3 ">
 
-                                            <h4 >Dados do Contrato</h4>
+                                            <h4 style={{marginTop: "14px"}} >Dados do Contrato</h4>
                                             <hr/>
                                             <div className = "col-md-3">
                                                 <label> Valor do Contrato: </label>

@@ -58,20 +58,65 @@ public class ContratoService {
         return output;
     }
 
-    private static String updateEstadoCivil(Cliente cliente, String docText) {
-        return docText.replace("${estadoCivil}", cliente.getEstadoCivil());
+    //ENTE_DEVEDOR
+    //COD_BANCO
+    //NOME_BANCO
+
+    private static String updateEnteDevedor(Cliente cliente, String docText) {
+        return docText.replace("${ENTE_DEVEDOR}", cliente.getEstadoCivil());
     }
 
+    private static String updateCodBanco(Cliente cliente, String docText) {
+        return docText.replace("${COD_BANCO}", cliente.getEstadoCivil());
+    }
+
+    private static String updateNomeBanco(Cliente cliente, String docText) {
+        return docText.replace("${NOME_BANCO}", cliente.getEstadoCivil());
+    }
+
+    private static String updateEstadoCivil(Cliente cliente, String docText) {
+        return docText.replace("${ESTADO_CIVIL}", cliente.getEstadoCivil());
+    }
+
+    private static String updateDataAtual(Cliente cliente, String docText) {
+        //TODO Data atual formatada
+        return docText.replace("${DATA_ATUAL}", cliente.getEstadoCivil());
+    }
+
+
     private static String updateNacionalidade(Cliente cliente, String docText) {
-        return docText.replace("${nacionalidade}", cliente.getNacionalidade());
+        return docText.replace("${NACIONALIDADE}", cliente.getNacionalidade());
+    }
+
+    //Dados Contrato
+    private static String valorContrato(Cliente cliente, String docText) {
+        return docText.replace("${VALOR_CONTRATO}", cliente.getContratos().stream().findFirst().get().getValorContrato().toString());
     }
 
     private static String valorContratoPorExtenso(Cliente cliente, String docText) {
-        return docText.replace("${valorContrato}", cliente.getEstadoCivil());
+        //TODO impl logica
+        return docText.replace("${VALOR_CONTRATO_EXTENSO}", cliente.getContratos().stream().findFirst().get().getValorContrato().toString());
     }
 
-    private static String valorOferecidoPorExtenso(Cliente cliente, String docText) {
-        return docText.replace("${valorOferecido}", cliente.getEstadoCivil());
+    private static String valorNegociadoPorExtenso(Cliente cliente, String docText) {
+        //TODO impl logica
+        return docText.replace("${VALOR_NEGOCIADO_POR_EXTENSO}", cliente.getContratos().stream().findFirst().get().getValorAcordado().toString());
+    }
+
+    private static String updateNumProcesso(Cliente cliente, String docText) {
+        return docText.replace("${NUM_PROCESSO}", cliente.getContratos().stream().findFirst().get().getNumProcesso());
+    }
+
+    private static String updateOrigemTramitacao(Cliente cliente, String docText) {
+        return docText.replace("${ORIGEM_TRAMITACAO}", cliente.getContratos().stream().findFirst().get().getOrigemTramitacao());
+    }
+
+    private static String updateNumPrecatorio(Cliente cliente, String docText) {
+        return docText.replace("${NUM_PRECATORIO}", cliente.getContratos().stream().findFirst().get().getNumPrecatorio());
+    }
+
+    private static String valorNegociado(Cliente cliente, String docText) {
+        return docText.replace("${VALOR_NEGOCIADO}", cliente.getContratos().stream().findFirst().get().getValorAcordado().toString());
     }
 
     private static String updateRG(Cliente cliente, String docText) {
@@ -82,9 +127,38 @@ public class ContratoService {
         return docText.replace("${CPF}", cliente.getCpf());
     }
 
-    private static String updateNome(Cliente cliente, String docText) {
-        return docText.replace("${nome}", cliente.getContato().getNome().toUpperCase());
+    private static String updateCidade(Cliente cliente, String docText) {
+        return docText.replace("${CIDADE}", cliente.getEndereco().getCidade());
     }
 
+    private static String updateNome(Cliente cliente, String docText) {
+        return docText.replace("${NOME}", cliente.getContato().getNome().toUpperCase());
+    }
+
+    private static String updateLogradouro(Cliente cliente, String docText) {
+        return docText.replace("${LOGRADOURO}", cliente.getEndereco().getLogradouro());
+    }
+
+    private static String updateLogradouroConjugue(Cliente cliente, String docText) {
+        return docText.replace("${LOGRADOURO_CONJUGUE}", cliente.getConjugue().getEndereco().getLogradouro());
+    }
+
+    private static String updateCidadeConjugue(Cliente cliente, String docText) {
+        return docText.replace("${CIDADE_CONJUGUE}", cliente.getConjugue().getEndereco().getCidade());
+    }
+
+    private static String updateNomeConjugue(Cliente cliente, String docText) {
+        return docText.replace("${NOME_CONJUGUE}", cliente.getConjugue().getNomeConjugue());
+    }
+
+    private static String updateEnderecoConjugue(Cliente cliente, String docText) {
+        //TODO impl endereço no padrão
+        return docText.replace("${ENDERECO_CONJUGUE}", cliente.getContato().getNome().toUpperCase());
+    }
+
+    private static String updateEndereco(Cliente cliente, String docText) {
+        //TODO impl endereço no padrão
+        return docText.replace("${ENDERECO}", cliente.getContato().getNome().toUpperCase());
+    }
 
 }

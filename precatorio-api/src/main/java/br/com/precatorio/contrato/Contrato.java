@@ -5,7 +5,6 @@ import br.com.precatorio.domain.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "CONTRATO")
@@ -26,15 +25,19 @@ public class Contrato extends AbstractEntity {
     @Column
     private String numProcesso;
 
-//    @NotNull(message = "Origem Tramitacao obrigatório.")
+    //    @NotNull(message = "Origem Tramitacao obrigatório.")
     @Column
     private String origemTramitacao;
 
-//    @NotNull(message = "Número Precatorio obrigatório.")
+    //    @NotNull(message = "Número Precatorio obrigatório.")
     @Column
     private String numPrecatorio;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @Column
+    private String enteDevedor;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
