@@ -1,17 +1,12 @@
 package br.com.precatorio.cliente;
 
-import br.com.precatorio.endereco.EnderecoRepository;
+import br.com.precatorio.system.exception.ConverterException;
 import br.com.precatorio.system.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +16,10 @@ import java.util.Map;
 @RequestMapping("/api/v1/")
 public class ClienteController {
     @Autowired
-    ClienteService service;
+    ClienteServiceImpl service;
     @Autowired
     ClienteRepository repository;
 
-    @Autowired
-    EnderecoRepository enderecoRepository;
-
-
-
-  
 
     // get all Clientes
     @GetMapping("/cliente")
@@ -42,32 +31,56 @@ public class ClienteController {
 
     // create Cliente rest api
     @PostMapping("/cliente")
-    public Cliente createCliente(@RequestBody ClienteDto dto) {
-        Cliente entity = ClienteDto.convertDtoToCliente(dto);
-        entity.setEndereco(enderecoRepository.save(entity.getEndereco()));
-        return repository.save(entity);
+    public ResponseEntity createCliente(@RequestBody ClienteDto dto) {
+        Cliente cliente = null;
+        try {
+            service.salvar(dto);
+
+            System.out.println(cliente);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao salvar o Cliente, contate o Thiagão do Gongolo!!!", e);
+        }
+        return ResponseEntity.ok().build();
     }
 
     // get Cliente by id rest api
     @GetMapping("/cliente/{id}")
     public ResponseEntity<ClienteDto> getClienteById(@PathVariable Long id) {
-        Cliente cliente = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
+        ClienteDto body = null;
+        try {
+            Cliente cliente = service.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
 
-        return ResponseEntity.ok(ClienteDto.convertClienteToDto(cliente));
+
+            body = ClienteDto.convertClienteToDto(cliente);
+        } catch (ConverterException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao Converter os dados do Cliente, contate o Thiagão do Gongolo!!!", e);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar o Cliente: " + id + ", contate o Thiagão do Gongolo!!!", e);
+        }
+
+        return ResponseEntity.ok(body);
     }
 
 
     @PutMapping("/cliente/{id}")
-    public ResponseEntity<ClienteDto> updateCliente(@PathVariable Long id,@Valid @RequestBody ClienteDto dto){
+    public ResponseEntity updateCliente(@PathVariable Long id, @Valid @RequestBody ClienteDto dto) {
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));
 
-        Cliente updated = ClienteDto.convertDtoToCliente(dto);
-        updated.setId(cliente.getId());
-        updated = repository.save(updated);
+        try {
 
-        return ResponseEntity.ok(ClienteDto.convertClienteToDto(updated));
+            service.update(dto, cliente);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao alterar o Cliente", e);
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     // delete Cliente rest api
