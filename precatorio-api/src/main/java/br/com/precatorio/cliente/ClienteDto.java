@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -50,10 +51,10 @@ public class ClienteDto {
     private String enteDevedor;
 
     @NotNull(message = "Nome do Banco obrigatório.")
-    private String NomeBanco;
+    private String nomeBanco;
 
     @NotNull(message = "Código obrigatório.")
-    private String CodBanco;
+    private String codBanco;
 
     //TODO mapear ENTE_DEVEDOR
     //COD_BANCO
@@ -142,26 +143,19 @@ public class ClienteDto {
 
                 .email(cliente.getContato().getEmail())
                 .estadoCivil(cliente.getEstadoCivil())
-
                 .estado(cliente.getEndereco().getEstado())
-
                 .logradouro(cliente.getEndereco().getLogradouro())
-
                 .nacionalidade(cliente.getNacionalidade())
-
                 .nomeContato(cliente.getContato().getNome())
-
                 .numero(cliente.getEndereco().getNumero())
-
                 .pais(cliente.getEndereco().getPais())
-
                 .percentual(cliente.getPercentual())
-
                 .profissao(cliente.getProfissao())
-
                 .rg(cliente.getRg())
-
                 .telefone(cliente.getContato().getTelefone())
+                .codBanco(cliente.getCodBanco())
+                .nomeBanco(cliente.getNomeBanco())
+
                 .build();
 
         boolean isMarried = cliente.getEstadoCivil().equals(EnumEstadoCivil.CASADO.getValor());
@@ -180,6 +174,7 @@ public class ClienteDto {
         dto.setNumProcesso(contrato.getNumProcesso());
         dto.setOrigemTramitacao(contrato.getOrigemTramitacao());
         dto.setValorAcordado(contrato.getValorAcordado());
+        dto.setEnteDevedor(contrato.getEnteDevedor());
 
     }
 
@@ -225,12 +220,15 @@ public class ClienteDto {
                 .endereco(endereco)
                 .updateAt(LocalDateTime.now())
                 .percentual(dto.getPercentual())
+                .codBanco(dto.getCodBanco())
+                .nomeBanco(dto.getNomeBanco())
                 .build();
 
         cliente.addContrato(contrato);
         contato.setCliente(cliente);
         cliente.setConjugue(conjugue);
-        conjugue.setCliente(cliente);
+        if (Objects.nonNull(conjugue))
+            conjugue.setCliente(cliente);
         return cliente;
 
     }
@@ -264,10 +262,11 @@ public class ClienteDto {
     private static Contrato getContrato(ClienteDto dto) {
         Contrato contrato = Contrato.builder()
                 .valorContrato(dto.getValorContrato())
-                .valorAcordado(dto.getValorContrato() * (dto.getPercentual()/100))
+                .valorAcordado(dto.getValorContrato() * (dto.getPercentual() / 100))
                 .numPrecatorio(dto.getNumPrecatorio())
                 .origemTramitacao(dto.getOrigemTramitacao())
                 .numProcesso(dto.getNumProcesso())
+                .enteDevedor(dto.getEnteDevedor())
                 .build();
         return contrato;
     }

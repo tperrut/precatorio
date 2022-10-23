@@ -239,7 +239,6 @@ class CreateClienteComponent extends Component {
         }else{
 
             ClienteService.updateCliente(cliente, this.state.id).then( res => {
-                alert("res.data.fieldErrors " + res.data.fieldErrors)
 
                 if(res.data.fieldErrors) {
 
@@ -405,8 +404,12 @@ class CreateClienteComponent extends Component {
             this.setState({codBanco: event.target.value});
     }
 
-    changeNomeBancolHandler = (event) => {
+    changeNomeBancoHandler = (event) => {
             this.setState({nomeBanco: event.target.value});
+    }
+
+    changeEnteDevedorHandler = (event) => {
+        this.setState({enteDevedor: event.target.value});
     }
 
 
@@ -717,17 +720,24 @@ class CreateClienteComponent extends Component {
                                             </div>
 
 
-                                             <div className = "col-md-6">
+                                             <div className = "col-md-4">
                                                 <label> Número do Processo: </label>
                                                 <input placeholder="" name="numProcesso" className="form-control"
                                                     value={this.state.numProcesso} onChange={this.changeNumProcessoHandler}/>
                                             </div>
 
-                                            <div className = "col-md-6">
+                                             <div className = "col-md-4 ">
+                                                <label> Ente Devedor : </label>
+                                                <input placeholder="..." name="enteDevedor" className="form-control"
+                                                    value={this.state.enteDevedor} onChange={this.changeEnteDevedorHandler}/>
+                                            </div>
+
+                                            <div className = "col-md-4">
                                                 <label> Número do Precatório : </label>
                                                 <input placeholder="..." name="numPrecatorio" className="form-control"
                                                     value={this.state.numPrecatorio} onChange={this.changeNumPrecatorioHandler}/>
                                             </div>
+
                                         </span>
 
                                             

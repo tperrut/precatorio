@@ -31,4 +31,5 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
         fieldErrorResponse.setFieldErrors(fieldErrors);
         return new ResponseEntity<>(fieldErrorResponse, status);
     }
+
 }
