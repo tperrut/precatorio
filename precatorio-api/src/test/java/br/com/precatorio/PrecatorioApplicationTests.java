@@ -12,13 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -131,9 +127,7 @@ class PrecatorioApplicationTests {
                 endereco(endereco).
                 nomeConjugue("Pequena Raimunda").
                 rg("020.133.110-5").
-                cpf("105.932.327-39").
-                estadoCivil("Casado")
-                .build();
+                cpf("105.932.327-39").build();
         return cjg;
     }
 

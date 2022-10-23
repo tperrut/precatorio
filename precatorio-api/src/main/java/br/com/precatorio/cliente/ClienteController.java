@@ -46,7 +46,7 @@ public class ClienteController {
     // get Cliente by id rest api
     @GetMapping("/cliente/{id}")
     public ResponseEntity<ClienteDto> getClienteById(@PathVariable Long id) {
-        ClienteDto body = null;
+        ClienteDto body;
         try {
             Cliente cliente = service.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Cliente not exist with id :" + id));

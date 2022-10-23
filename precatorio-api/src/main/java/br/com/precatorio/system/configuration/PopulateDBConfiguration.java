@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,61 +45,54 @@ public class PopulateDBConfiguration {
             Endereco endereco4 = Endereco.builder().logradouro("Rua B").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 111").build();
 
 
+        Stream.of(
+                //Endereco.builder().logradouro("Rua V").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 444").build()
+                endereco, endereco1, endereco2, endereco3, endereco4
+        ).forEach(
+                adress -> enderecoRepository.saveAndFlush(adress)
+        );
 
-            Stream.of(
-                    //Endereco.builder().logradouro("Rua V").cidade("Val Paraiso").estado("GO").pais("Brasil").numero(34).complemento("Ap 444").build()
-                    endereco,endereco1,endereco2,endereco3,endereco4
-            ).forEach(
-                    adress -> enderecoRepository.saveAndFlush(adress)
-            );
+        Cliente cliente5 = Cliente.builder().rg("330.144.178-8").cpf("755.777.978-55").estadoCivil("Casado")
+                .endereco(endereco4)
+                .contato(rock_bauer).build();
 
-            Conjugue cjg = Conjugue.builder().
-                    endereco(endereco4).
-                    nomeConjugue("Pequena Raimunda").
-                    rg("020.133.110-5").
-                    cpf("105.932.327-39").
-                    estadoCivil("Casado")
-                    .build();
-            cjg = conjugueRepository.saveAndFlush(cjg);
+        Conjugue cjg = Conjugue.builder().
+                endereco(endereco4).
+                nomeConjugue("Pequena Raimunda").
+                rg("020.133.110-5").
+                cpf("105.932.327-39").
+                profissao("Chatão").
+                nacionalidade("Uruguaia").
+                updateAt(LocalDateTime.now()).
+                build();
 
-            Cliente cliente1 = Cliente.builder().rg("020.133.110-5").cpf("105.932.327-39").estadoCivil("Casado")
-                    .endereco(endereco)
-                    .conjugue(cjg)
-                    .contato(jack_tequila).build();
-            Cliente cliente2 = Cliente.builder().rg("042.141.155-2").cpf("102.932.876-32").estadoCivil("Solteiro")
-                    .endereco(endereco1)
-                    .contato(jack_estripador).build();
-            Cliente cliente3 = Cliente.builder().rg("770.122.199-7").cpf("574.563.909-11").estadoCivil("Casado")
+
+        Cliente cliente1 = Cliente.builder().rg("020.133.110-5").cpf("105.932.327-39").estadoCivil("Casado")
+                .endereco(endereco)
+                .conjugue(cjg)
+                .contato(jack_tequila).build();
+        Cliente cliente2 = Cliente.builder().rg("042.141.155-2").cpf("102.932.876-32").estadoCivil("Solteiro")
+                .endereco(endereco1)
+                .contato(jack_estripador).build();
+        Cliente cliente3 = Cliente.builder().rg("770.122.199-7").cpf("574.563.909-11").estadoCivil("Casado")
                     .endereco(endereco3)
                     .contato(jay_tequila).build();
             Cliente cliente4 = Cliente.builder().rg("029.111.179-6").cpf("132.213.000-22").estadoCivil("Solteiro")
                     .endereco(endereco2)
                     .contato(jack_jhonson).build();
 
-            Cliente cliente5 = Cliente.builder().rg("330.144.178-8").cpf("755.777.978-55").estadoCivil("Casado")
-                    .endereco(endereco4)
-                    .contato(rock_bauer).build();
 
-            /*
-            endereco.setCliente(cliente1);
-            endereco1.setCliente(cliente2);
-            endereco2.setCliente(cliente3);
-            endereco3.setCliente(cliente4);
-            endereco4.setCliente(cliente5);
-             */
-            jack_estripador.setCliente(cliente1);
-            jack_tequila.setCliente(cliente2);
-            jack_jhonson.setCliente(cliente3);
-            jay_tequila.setCliente(cliente4);
-            rock_bauer.setCliente(cliente5);
+        jack_estripador.setCliente(cliente1);
+        jack_tequila.setCliente(cliente2);
+        jack_jhonson.setCliente(cliente3);
+        jay_tequila.setCliente(cliente4);
+        rock_bauer.setCliente(cliente5);
 
-            List list = Stream.of(cliente1,cliente2,cliente4,cliente3,cliente4,cliente5).collect(Collectors.toList());
-            clienteRepository.saveAllAndFlush(list);
+        List list = Stream.of(cliente1, cliente2, cliente4, cliente3, cliente4, cliente5).collect(Collectors.toList());
+        clienteRepository.saveAllAndFlush(list);
+        cjg.setCliente(cliente1);
+        conjugueRepository.saveAndFlush(cjg);
 
-
-
-
-//          clienteRepository.findAll().forEach(System.out::println);
-        };
+    };
 
 }
