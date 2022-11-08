@@ -1,12 +1,12 @@
 package br.com.precatorio.endereco;
 
-import br.com.precatorio.cliente.Cliente;
 import br.com.precatorio.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity @Table(name = "ENDERECO")
 @Getter @Setter
@@ -24,6 +24,8 @@ public class Endereco extends AbstractEntity {
     private Integer numero;
     private String complemento;
     private String cep;
+
+    private String bairro;
 
 
     @Override

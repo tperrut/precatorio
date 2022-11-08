@@ -47,6 +47,11 @@ public class Cliente extends AbstractEntity {
     @Column()
     private String nomeBanco;
 
+    @Column()
+    private String agencia;
+    @Column()
+    private String contaCorrente;
+
     @OneToOne
     private Endereco endereco;
 

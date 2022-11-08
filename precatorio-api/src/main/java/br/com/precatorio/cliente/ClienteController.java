@@ -39,6 +39,7 @@ public class ClienteController {
             service.salvar(dto);
 
             System.out.println(cliente);
+
         } catch (Exception e) {
             return handleRunTime(new RuntimeException("Erro ao salvar o Cliente, contate o Thiagão do Gongolo!!!"), HttpStatus.INTERNAL_SERVER_ERROR);
 

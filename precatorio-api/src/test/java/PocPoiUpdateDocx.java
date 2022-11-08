@@ -1,4 +1,6 @@
 import br.com.precatorio.cliente.Cliente;
+import br.com.precatorio.contato.Contato;
+import br.com.precatorio.domain.EnumEstadoCivil;
 import br.com.precatorio.system.util.NumeroPorExtenso;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -8,8 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,15 +17,21 @@ public class PocPoiUpdateDocx {
     public static void main(String[] args) throws IOException {
         PocPoiUpdateDocx obj = new PocPoiUpdateDocx();
 
-//        Cliente jack = new Cliente("Thiago perrut",
-//                "teste@gmail.com", LocalDateTime.now(),
-//                "2198511-0076",
-//                "Casado", "M");
-//
-//
-//        obj.updateDocument("c:\\test\\TEMPLATE_SOLTEIRO.docx","c:\\test\\TEMPLATE_SOLTEIRO_FINAL.docx",jack);
-//
-//        PocConvertWorToPdf.run();
+        Contato ctt = Contato.builder()
+                .nome("Thiperrut")
+                .build();
+        Cliente jack = new Cliente();
+        jack.setEstadoCivil(EnumEstadoCivil.CASADO.getValor());
+        jack.setContato(ctt);
+
+        obj.updateDocument("c:\\test\\TEMPLATE_SOLTEIRO.docx", "c:\\test\\TEMPLATE_SOLTEIRO_FINAL.docx", jack);
+
+        PocConvertWorToPdf.run();
+    }
+
+    private static String updateNome(Cliente cliente, String docText) {
+        docText = docText.replace("{NOME}", cliente.getContato().getNome().toUpperCase());
+        return docText;
     }
 
     void updateDocument(String input, String output, Cliente cliente)
@@ -39,15 +45,15 @@ public class PocPoiUpdateDocx {
             for (XWPFParagraph xwpfParagraph : xwpfParagraphList) {
                 for (XWPFRun xwpfRun : xwpfParagraph.getRuns()) {
                     String docText = xwpfRun.getText(0);
-                    if(Objects.isNull(docText))
+                    if (Objects.isNull(docText))
                         continue;
 
 
                     //replacement
                     docText = updateNome(cliente, docText);
 
-                    docText = docText.replace("${estadoCivil}", cliente.getEstadoCivil());
-                    docText = docText.replace("${extenso}", new NumeroPorExtenso(25000).toString());
+                    docText = docText.replace("{ESTADO_CIVIL}", cliente.getEstadoCivil());
+                    docText = docText.replace("{VALOR_CONTRATO_EXTENSO}", new NumeroPorExtenso(25000).toString());
                     xwpfRun.setText(docText, 0);
                 }
             }
@@ -59,11 +65,6 @@ public class PocPoiUpdateDocx {
 
         }
 
-    }
-
-    private static String updateNome(Cliente cliente, String docText) {
-        docText = docText.replace("${nome}", cliente.getContato().getNome().toUpperCase());
-        return docText;
     }
 
 

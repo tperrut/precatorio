@@ -56,6 +56,13 @@ public class ClienteDto {
     @NotNull(message = "Código obrigatório.")
     private String codBanco;
 
+    @NotNull(message = "Código da agencia obrigatório.")
+    private String agencia;
+
+    @NotNull(message = "Conta corrente obrigatório.")
+    private String contaCorrente;
+
+
     //TODO mapear ENTE_DEVEDOR
     //COD_BANCO
     //NOME_BANCO
@@ -74,7 +81,8 @@ public class ClienteDto {
     private String pais;
     @NotNull(message = "Número obrigatório.")
     private Integer numero;
-
+    @NotNull(message = "Bairro obrigatório.")
+    private String bairro;
     //@NotNull(message = "Complemento obrigatório.")
     private String complemento;
     @NotNull(message = "Cep obrigatório.")
@@ -113,6 +121,8 @@ public class ClienteDto {
 
     private String logradouroConjugue;
     private String cidadeConjugue;
+    private String bairroConjugue;
+
     private String estadoConjugue;
     private String paisConjugue;
     private Integer numeroConjugue;
@@ -136,7 +146,7 @@ public class ClienteDto {
                 .cep(cliente.getEndereco().getCep())
 
                 .cidade(cliente.getEndereco().getCidade())
-
+                .bairro(cliente.getEndereco().getBairro())
                 .complemento(cliente.getEndereco().getComplemento())
 
                 .cpf(cliente.getCpf())
@@ -155,7 +165,8 @@ public class ClienteDto {
                 .telefone(cliente.getContato().getTelefone())
                 .codBanco(cliente.getCodBanco())
                 .nomeBanco(cliente.getNomeBanco())
-
+                .agencia(cliente.getAgencia())
+                .contaCorrente(cliente.getContaCorrente())
                 .build();
 
         boolean isMarried = cliente.getEstadoCivil().equals(EnumEstadoCivil.CASADO.getValor());
@@ -181,6 +192,7 @@ public class ClienteDto {
     private static void popularConjugue(ClienteDto dto, Cliente cliente) {
         dto.setCepConjugue(cliente.getConjugue().getEndereco().getCep());
         dto.setCidadeConjugue(cliente.getConjugue().getEndereco().getCidade());
+        dto.setBairroConjugue(cliente.getConjugue().getEndereco().getBairro());
         dto.setComplementoConjugue(cliente.getConjugue().getEndereco().getComplemento());
         dto.setCpfConjugue(cliente.getConjugue().getCpf());
         dto.setEstadoConjugue(cliente.getConjugue().getEndereco().getEstado());
@@ -222,6 +234,8 @@ public class ClienteDto {
                 .percentual(dto.getPercentual())
                 .codBanco(dto.getCodBanco())
                 .nomeBanco(dto.getNomeBanco())
+                .agencia(dto.getAgencia())
+                .contaCorrente(dto.getContaCorrente())
                 .build();
 
         cliente.addContrato(contrato);
@@ -237,6 +251,7 @@ public class ClienteDto {
         Endereco endereco = Endereco.builder()
                 .complemento(dto.getComplementoConjugue())
                 .cidade(dto.getCidadeConjugue())
+                .bairro(dto.getBairroConjugue())
                 .logradouro(dto.getLogradouroConjugue())
                 .cep(dto.getCepConjugue())
                 .numero(dto.getNumeroConjugue())
@@ -294,6 +309,7 @@ public class ClienteDto {
         Endereco endereco = Endereco.builder()
                 .complemento(dto.getComplemento())
                 .cidade(dto.getCidade())
+                .bairro(dto.getBairro())
                 .logradouro(dto.getLogradouro())
                 .cep(dto.getCep())
                 .numero(dto.getNumero())
@@ -307,6 +323,7 @@ public class ClienteDto {
         Endereco endereco = Endereco.builder()
                 .complemento(cliente.getEndereco().getComplemento())
                 .cidade(cliente.getEndereco().getCidade())
+                .bairro(cliente.getEndereco().getBairro())
                 .logradouro(cliente.getEndereco().getLogradouro())
                 .cep(cliente.getEndereco().getCep())
                 .numero(cliente.getEndereco().getNumero())

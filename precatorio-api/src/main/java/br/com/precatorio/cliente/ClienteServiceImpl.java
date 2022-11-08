@@ -54,8 +54,11 @@ public class ClienteServiceImpl implements ClienteService<Cliente> {
 
         clienteRepository.save(clienteConverted);
 
-        clienteConverted.getConjugue().setCliente(clienteConverted);
-        salvarConjugue(clienteConverted.getConjugue());
+        if (Objects.nonNull(clienteConverted.getConjugue())) {
+            clienteConverted.getConjugue().setCliente(clienteConverted);
+            clienteConverted.getConjugue().setId(cliente.getConjugue().getId());
+            salvarConjugue(clienteConverted.getConjugue());
+        }
 
         if (clienteConverted.getContratos().stream().findFirst().isPresent())
             salvarContrato(clienteConverted);
