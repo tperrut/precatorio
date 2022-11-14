@@ -8,7 +8,6 @@ import br.com.precatorio.contato.Contato;
 import br.com.precatorio.endereco.Endereco;
 import br.com.precatorio.endereco.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
@@ -28,7 +27,7 @@ public class PopulateDBConfiguration {
     @Autowired
     private ConjugueRepository conjugueRepository;
 
-    @Bean
+//    @Bean
     public void populateDB() {
 
         Contato jack_tequila = Contato.builder().nome("Jack tequila").email("email@email.com").telefone("2198511-0076").build();
