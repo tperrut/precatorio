@@ -56,11 +56,11 @@ public class ContratoService {
         if (cliente.getEstadoCivil().equals(EnumEstadoCivil.CASADO.getValor()))
             input = TEMPLATE_CASADO;
 
-//        Resource resource = new ClassPathResource("classpath:"+input);
         Resource resource = resourceLoader.getResource("classpath:" + input);
         InputStream inputStream = resource.getInputStream();
 
-        ByteArrayOutputStream byteArrayOutputStream = null;
+        ByteArrayOutputStream arquivoSaida = null;
+
         try (XWPFDocument doc = new XWPFDocument(inputStream)) {
             List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
             //Iterate over paragraph list and check for the replaceable text in each paragraph
@@ -119,16 +119,16 @@ public class ContratoService {
 
             // save the docs
             // save the docs
-            byteArrayOutputStream = new ByteArrayOutputStream();
-            doc.write(byteArrayOutputStream);
+            arquivoSaida = new ByteArrayOutputStream();
+            doc.write(arquivoSaida);
 
 
         } finally {
             inputStream.close();
-            byteArrayOutputStream.close();
+            arquivoSaida.close();
         }
 
-        return byteArrayOutputStream.toByteArray();
+        return arquivoSaida.toByteArray();
     }
 
     private String updateAgencia(Cliente cliente, String docText) {
