@@ -23,7 +23,6 @@ public class PrecatorioApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/v1/*").allowedOrigins("https://precatorio-app.herokuapp.com");
-
             }
         };
     }
