@@ -3,17 +3,18 @@ package br.com.precatorio.contrato;
 import br.com.precatorio.cliente.ClienteRepository;
 import br.com.precatorio.endereco.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.FileCopyUtils;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.IOException;
 
+//@CrossOrigin(origins = "https://precatorio-app.herokuapp.com")
 @CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping("/api/v1/contrato/")
 public class ContratoController {
@@ -25,58 +26,53 @@ public class ContratoController {
     @Autowired
     EnderecoRepository enderecoRepository;
 
-    @GetMapping(path = "cliente/download/{id}")
-    public HttpEntity<byte[]> gerarContratoWordV1(@PathVariable Long id) {
+  /*  @GetMapping(path = "cliente/download/{id}")
+    public void gerarContratoWordV1(@PathVariable Long id, HttpServletResponse response) {
         var cliente = repository.findById(id);
-
-        if (!cliente.isPresent())
-            return (HttpEntity<byte[]>) HttpEntity.EMPTY;
 
         try {
 
-            String output = service.gerarContratoDocx(cliente.get());
+            byte[] arquivo = service.gerarContratoDocx(cliente.get());
 
-            byte[] arquivo = Files.readAllBytes(Paths.get(output));
+            String nomeArquivo = cliente.get().getCpf();
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + nomeArquivo + ".docx\"");
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+            response.setContentLength(arquivo.length);
+
+            FileCopyUtils.copy(arquivo, response.getOutputStream());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }*/
+
+
+    @GetMapping(path = "cliente/download/{id}")
+    public ResponseEntity<Resource> gerarContratoWordV1(@PathVariable Long id) {
+
+
+        var cliente = repository.findById(id);
+
+        try {
+            byte[] arquivo = service.gerarContratoDocx(cliente.get());
+
+            ByteArrayResource resource = new ByteArrayResource(arquivo);
 
             HttpHeaders httpHeaders = new HttpHeaders();
             String nomeArquivo = cliente.get().getCpf();
-            httpHeaders.add("Content-Disposition", "attachment;filename=\"" + nomeArquivo + ".docx\"");
-            httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+            String headerValue = "attachment; filename=" + nomeArquivo + ".docx";
+            httpHeaders.add("Content-Disposition", headerValue);
 
-            HttpEntity<byte[]> entity = new HttpEntity<byte[]>(arquivo, httpHeaders);
-
-            return entity;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //    @GetMapping(path = "/download/{id}")
-    public void gerarContratoWord(@PathVariable Long id, HttpServletResponse response) {
-        var cliente = repository.findById(id);
-
-//        if(!cliente.isPresent())  return ResponseEntity.notFound().build();
-
-        try {
-
-            String output = service.gerarContratoDocx(cliente.get());
-
-            byte[] arquivo = Files.readAllBytes(Paths.get(output));
-            File file = Paths.get(output).toFile();
-            String nomeArquivo = cliente.get().getCpf();
-
-            response.setContentLength((int) file.length());
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + nomeArquivo + ".docx\"");
-            response.setHeader(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
-            InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-
-            FileCopyUtils.copy(inputStream, response.getOutputStream());
+            return ResponseEntity.ok()
+                    .headers(httpHeaders)
+                    .contentLength(arquivo.length)
+                    .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                    .body(resource);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
 
 }

@@ -75,9 +75,9 @@ public class NumeroPorExtenso {
     public void show() {
         Iterator valores = nro.iterator();
         while (valores.hasNext()) {
-            System.out.println(((Integer) valores.next()).intValue());
+           // System.out.println(((Integer) valores.next()).intValue());
         }
-        System.out.println(toString());
+//        System.out.println(toString());
     }
 
     public String toString() {

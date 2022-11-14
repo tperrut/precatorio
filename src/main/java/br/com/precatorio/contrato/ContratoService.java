@@ -7,12 +7,15 @@ import br.com.precatorio.system.util.NumeroPorExtenso;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -21,11 +24,14 @@ import java.util.Objects;
 
 @Service
 public class ContratoService {
-
-    private final String TEMPLATE_SOLTEIRO = "c:\\test\\TEMPLATE_SOLTEIRO.docx";
-    private final String TEMPLATE_CASADO = "c:\\test\\TEMPLATE_CASADO.docx";
-    HashMap<Integer, String> meses = new HashMap<>();
+    HashMap<Integer, String> meses;
+    @Autowired
+    ResourceLoader resourceLoader;
+    @Value("${path.template.solteiro}")
+    private String TEMPLATE_SOLTEIRO;
     private String TEMPLATE_SAIDA = "c:\\test\\";
+    @Value("${path.template.casado}")
+    private String TEMPLATE_CASADO;
 
     public ContratoService() {
         this.meses = new HashMap<>();
@@ -43,16 +49,19 @@ public class ContratoService {
         meses.put(12, "Dezembro");
     }
 
-    public String gerarContratoDocx(Cliente cliente) throws IOException {
+    public byte[] gerarContratoDocx(Cliente cliente) throws IOException {
         String input = TEMPLATE_SOLTEIRO;
         String output = TEMPLATE_SAIDA + cliente.getCpf() + ".docx";
 
         if (cliente.getEstadoCivil().equals(EnumEstadoCivil.CASADO.getValor()))
             input = TEMPLATE_CASADO;
 
-        try (XWPFDocument doc = new XWPFDocument(
-                Files.newInputStream(Paths.get(input)))
-        ) {
+//        Resource resource = new ClassPathResource("classpath:"+input);
+        Resource resource = resourceLoader.getResource("classpath:" + input);
+        InputStream inputStream = resource.getInputStream();
+
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try (XWPFDocument doc = new XWPFDocument(inputStream)) {
             List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
             //Iterate over paragraph list and check for the replaceable text in each paragraph
             for (XWPFParagraph xwpfParagraph : xwpfParagraphList) {
@@ -109,13 +118,17 @@ public class ContratoService {
             }
 
             // save the docs
-            try (FileOutputStream out = new FileOutputStream(output)) {
-                doc.write(out);
-            }
+            // save the docs
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            doc.write(byteArrayOutputStream);
 
+
+        } finally {
+            inputStream.close();
+            byteArrayOutputStream.close();
         }
 
-        return output;
+        return byteArrayOutputStream.toByteArray();
     }
 
     private String updateAgencia(Cliente cliente, String docText) {
