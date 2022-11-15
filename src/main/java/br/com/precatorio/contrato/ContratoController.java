@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@CrossOrigin(origins = "https://precatorio-app.herokuapp.com")
-//@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "https://precatorio-app.herokuapp.com")
+@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
 @RequestMapping("/api/v1/contrato/")
@@ -61,13 +61,13 @@ public class ContratoController {
 
             HttpHeaders httpHeaders = new HttpHeaders();
             String nomeArquivo = cliente.get().getCpf();
-            String headerValue = "attachment; filename=" + nomeArquivo + ".docx";
+            String headerValue = "attachment; filename=\"" + nomeArquivo + ".docx\"";
             httpHeaders.add("Content-Disposition", headerValue);
-
+            httpHeaders.add("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             return ResponseEntity.ok()
                     .headers(httpHeaders)
                     .contentLength(arquivo.length)
-                    .contentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                     .body(resource);
 
         } catch (IOException e) {

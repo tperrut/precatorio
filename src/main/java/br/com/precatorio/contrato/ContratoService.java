@@ -14,6 +14,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -59,76 +60,73 @@ public class ContratoService {
         Resource resource = resourceLoader.getResource("classpath:" + input);
         InputStream inputStream = resource.getInputStream();
 
-        ByteArrayOutputStream arquivoSaida = null;
+        try( ByteArrayOutputStream arquivoSaida = new ByteArrayOutputStream()) {
 
-        try (XWPFDocument doc = new XWPFDocument(inputStream)) {
-            List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
-            //Iterate over paragraph list and check for the replaceable text in each paragraph
-            for (XWPFParagraph xwpfParagraph : xwpfParagraphList) {
-                for (XWPFRun xwpfRun : xwpfParagraph.getRuns()) {
-                    String docText = xwpfRun.getText(0);
-                    if (Objects.isNull(docText))
-                        continue;
+            try (XWPFDocument doc = new XWPFDocument(inputStream)) {
+                List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
+                //Iterate over paragraph list and check for the replaceable text in each paragraph
+                for (XWPFParagraph xwpfParagraph : xwpfParagraphList) {
+                    for (XWPFRun xwpfRun : xwpfParagraph.getRuns()) {
+                        String docText = xwpfRun.getText(0);
+                        if (Objects.isNull(docText))
+                            continue;
 
-                    if (docText.contains("DATA_ATUAL") || docText.contains("VALOR_CTT") || docText.contains("BANCO") || docText.contains("PROMITENTE VENDEDOR:"))
-                        System.out.println();
-
-
-                    //Dados do Cliente
-                    docText = updateNome(cliente, docText);
-                    docText = updateNacionalidade(cliente, docText);
-                    docText = updateProfissao(cliente, docText);
-                    docText = updateEstadoCivil(cliente, docText);
-                    docText = updateRG(cliente, docText);
-                    docText = updateCPF(cliente, docText);
-                    docText = updateEnteDevedor(cliente, docText);
+                        if (docText.contains("DATA_ATUAL") || docText.contains("VALOR_CTT") || docText.contains("BANCO") || docText.contains("PROMITENTE VENDEDOR:"))
+                            System.out.println();
 
 
-                    //Dados bancarios
-                    docText = updateNomeBanco(cliente, docText);
-                    docText = updateCodBanco(cliente, docText);
-                    docText = updateAgencia(cliente, docText);
-                    docText = updateContaCorrente(cliente, docText);
-
-                    //Endereco Cliente
-
-
-                    //Dados do Conjugue
+                        //Dados do Cliente
+                        docText = updateNome(cliente, docText);
+                        docText = updateNacionalidade(cliente, docText);
+                        docText = updateProfissao(cliente, docText);
+                        docText = updateEstadoCivil(cliente, docText);
+                        docText = updateRG(cliente, docText);
+                        docText = updateCPF(cliente, docText);
+                        docText = updateEnteDevedor(cliente, docText);
 
 
-                    //Dados do Contrato
-                    docText = updateDataAtual(cliente, docText);
-                    docText = updateNumProcesso(cliente, docText);
-                    docText = updateNumPrecatorio(cliente, docText);
-                    docText = updateOrigemTramitacao(cliente, docText);
-                    docText = valorContrato(cliente, docText);
+                        //Dados bancarios
+                        docText = updateNomeBanco(cliente, docText);
+                        docText = updateCodBanco(cliente, docText);
+                        docText = updateAgencia(cliente, docText);
+                        docText = updateContaCorrente(cliente, docText);
 
-                    docText = valorNegociado(cliente, docText);
-
-                    //Dados do Customizados
-                    docText = valorNegociadoPorExtenso(cliente, docText);
-                    docText = valorContratoPorExtenso(cliente, docText);
-                    docText = updateEndereco(cliente, docText);
-
-                    //TODO Validar com Rafael   docText = updateEnderecoConjugue(cliente, docText);
+                        //Endereco Cliente
 
 
-                    xwpfRun.setText(docText, 0);
+                        //Dados do Conjugue
+
+
+                        //Dados do Contrato
+                        docText = updateDataAtual(cliente, docText);
+                        docText = updateNumProcesso(cliente, docText);
+                        docText = updateNumPrecatorio(cliente, docText);
+                        docText = updateOrigemTramitacao(cliente, docText);
+                        docText = valorContrato(cliente, docText);
+
+                        docText = valorNegociado(cliente, docText);
+
+                        //Dados do Customizados
+                        docText = valorNegociadoPorExtenso(cliente, docText);
+                        docText = valorContratoPorExtenso(cliente, docText);
+                        docText = updateEndereco(cliente, docText);
+
+                        //TODO Validar com Rafael   docText = updateEnderecoConjugue(cliente, docText);
+
+
+                        xwpfRun.setText(docText, 0);
+                    }
+                }
+
+                // save the docs
+                try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                    doc.write(arquivoSaida);
+
                 }
             }
-
-            // save the docs
-            // save the docs
-            arquivoSaida = new ByteArrayOutputStream();
-            doc.write(arquivoSaida);
-
-
-        } finally {
-            inputStream.close();
-            arquivoSaida.close();
+            return arquivoSaida.toByteArray();
         }
 
-        return arquivoSaida.toByteArray();
     }
 
     private String updateAgencia(Cliente cliente, String docText) {
@@ -191,15 +189,12 @@ public class ContratoService {
     private String valorContratoPorExtenso(Cliente cliente, String docText) {
         //TODO impl logica
         NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso(cliente.getContratos().stream().findFirst().get().getValorContrato());
-        numeroPorExtenso.show();
-
         return docText.replace("{VALOR_CTT_EXTENSO}", numeroPorExtenso.toString());
     }
 
     private String valorNegociadoPorExtenso(Cliente cliente, String docText) {
         //TODO impl logica
         NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso(cliente.getContratos().stream().findFirst().get().getValorAcordado());
-        numeroPorExtenso.show();
 
         return docText.replace("{VALOR_NEGOCIADO_POR_EXTENSO}", numeroPorExtenso.toString());
     }
