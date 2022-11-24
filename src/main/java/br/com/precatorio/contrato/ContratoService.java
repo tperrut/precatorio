@@ -14,13 +14,14 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @Service
@@ -183,7 +184,13 @@ public class ContratoService {
 
     //Dados Contrato
     private String valorContrato(Cliente cliente, String docText) {
-        return docText.replace("VALOR_CONTRATO", cliente.getContratos().stream().findFirst().get().getValorContrato().toString());
+        Locale localeBr = new Locale("pt", "BR");
+        NumberFormat currency = NumberFormat.getCurrencyInstance(localeBr);
+
+
+        Double getValorContrato = cliente.getContratos().stream().findFirst().get().getValorContrato();
+        String valorFormated = currency.format(getValorContrato);
+        return docText.replace("VALOR_CONTRATO", valorFormated);
     }
 
     private String valorContratoPorExtenso(Cliente cliente, String docText) {
@@ -212,7 +219,13 @@ public class ContratoService {
     }
 
     private String valorNegociado(Cliente cliente, String docText) {
-        return docText.replace("{VALOR_NEGOCIADO}", cliente.getContratos().stream().findFirst().get().getValorAcordado().toString());
+        Locale localeBr = new Locale("pt", "BR");
+        NumberFormat currency = NumberFormat.getCurrencyInstance(localeBr);
+
+
+        Double getValorContrato = cliente.getContratos().stream().findFirst().get().getValorAcordado();
+        String valorFormated = currency.format(getValorContrato);
+        return docText.replace("{VALOR_NEGOCIADO}", valorFormated);
     }
 
     private String updateRG(Cliente cliente, String docText) {
