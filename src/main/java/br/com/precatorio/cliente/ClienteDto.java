@@ -92,7 +92,8 @@ public class ClienteDto {
     private Double valorContrato;
 
     @NotNull(message = "Percentual obrigatório.")
-    private Double percentual;
+    private Double valorNegociado;
+
     @NotNull(message = "Profissão obrigatório.")
     private String profissao;
 
@@ -159,7 +160,7 @@ public class ClienteDto {
                 .nomeContato(cliente.getContato().getNome())
                 .numero(cliente.getEndereco().getNumero())
                 .pais(cliente.getEndereco().getPais())
-                .percentual(cliente.getPercentual())
+                .valorNegociado(cliente.getValorNegociado())
                 .profissao(cliente.getProfissao())
                 .rg(cliente.getRg())
                 .telefone(cliente.getContato().getTelefone())
@@ -231,7 +232,6 @@ public class ClienteDto {
                 .profissao(dto.getProfissao())
                 .endereco(endereco)
                 .updateAt(LocalDateTime.now())
-                .percentual(dto.getPercentual())
                 .codBanco(dto.getCodBanco())
                 .nomeBanco(dto.getNomeBanco())
                 .agencia(dto.getAgencia())
@@ -277,7 +277,7 @@ public class ClienteDto {
     private static Contrato getContrato(ClienteDto dto) {
         Contrato contrato = Contrato.builder()
                 .valorContrato(dto.getValorContrato())
-                .valorAcordado(dto.getValorContrato() * (dto.getPercentual() / 100))
+                .valorAcordado(dto.getValorNegociado())
                 .numPrecatorio(dto.getNumPrecatorio())
                 .origemTramitacao(dto.getOrigemTramitacao())
                 .numProcesso(dto.getNumProcesso())

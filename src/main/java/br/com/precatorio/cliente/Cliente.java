@@ -43,7 +43,7 @@ public class Cliente extends AbstractEntity {
     private String nacionalidade;
 
     @Column()
-    private Double percentual;
+    private Double valorNegociado;
 
     @Column()
     private String codBanco;
