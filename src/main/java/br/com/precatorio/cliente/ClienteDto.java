@@ -32,11 +32,11 @@ public class ClienteDto {
     private String nomeContato;
 
     @NotNull(message = "RG obrigatório.")
-    @Size(min = 10, message = "RG obrigatório.")
+    @Size(min = 10, message = "RG inválido.")
     private String rg;
 
     @NotNull(message = "CPF obrigatório.")
-    @Size(min = 10, message = "CPF obrigatório.")
+    @Size(min = 10, message = "CPF inválido.")
     private String cpf;
 
     @NotNull(message = "Email obrigatório.")
@@ -90,9 +90,6 @@ public class ClienteDto {
 
     @NotNull(message = "Valor obrigatório.")
     private Double valorContrato;
-
-    @NotNull(message = "Percentual obrigatório.")
-    private Double valorNegociado;
 
     @NotNull(message = "Profissão obrigatório.")
     private String profissao;
@@ -160,7 +157,6 @@ public class ClienteDto {
                 .nomeContato(cliente.getContato().getNome())
                 .numero(cliente.getEndereco().getNumero())
                 .pais(cliente.getEndereco().getPais())
-                .valorNegociado(cliente.getValorNegociado())
                 .profissao(cliente.getProfissao())
                 .rg(cliente.getRg())
                 .telefone(cliente.getContato().getTelefone())
@@ -277,7 +273,7 @@ public class ClienteDto {
     private static Contrato getContrato(ClienteDto dto) {
         Contrato contrato = Contrato.builder()
                 .valorContrato(dto.getValorContrato())
-                .valorAcordado(dto.getValorNegociado())
+                .valorAcordado(dto.getValorAcordado())
                 .numPrecatorio(dto.getNumPrecatorio())
                 .origemTramitacao(dto.getOrigemTramitacao())
                 .numProcesso(dto.getNumProcesso())
